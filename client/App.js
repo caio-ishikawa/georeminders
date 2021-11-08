@@ -1,12 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Map from './components/Map';
 import * as Location from 'expo-location';
 import Header from './components/HeaderIOS';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
+import { CoordContext } from './global/Contexts';
 
 export default function App() {
+  const [coords, setCoords] = useState('');
 
   const test = async() => {
     let loc = await Location.requestForegroundPermissionsAsync();
@@ -17,11 +19,13 @@ export default function App() {
 
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Map/>
-      <Header/>
-    </View>
+    <CoordContext.Provider value={[coords, setCoords]}>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <Map/>
+        <Header/>
+      </View>
+    </CoordContext.Provider>
   );
 }
 
