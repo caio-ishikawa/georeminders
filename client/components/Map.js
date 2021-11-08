@@ -14,7 +14,7 @@ const Map = () => {
     // Updates location //
     const updateLocation = async () => {
         let userLocation = await Location.getCurrentPositionAsync({});
-        setLocation(userLocation);
+        setLocation(userLocation.coords);
     }
 
     TaskManager.defineTask(LOCATION_TASK_NAME, updateLocation);
@@ -28,15 +28,17 @@ const Map = () => {
         });
         console.log(loc)
         console.log(coords ? coords : "no coordinates yet");
-        const newCamera = {
-            center: { latitude: coords.lat, longitude: coords.lng},
-            zoom: 15,
-            heading: 0,
-            pitch: 0,
-            altitude: 5
+        if (coords) { 
+            const newCamera = {
+                center: { latitude: coords.lat, longitude: coords.lng},
+                zoom: 15,
+                heading: 0,
+                pitch: 100,
+                altitude: 10 
+            }
+            mapRef.current.animateCamera(newCamera, {duration: 1000});
         }
-        mapRef.current.animateCamera(newCamera, {duration: 1});
-        //console.log(location)
+        console.log(location)
     },[location, coords]);
 
 
@@ -46,11 +48,11 @@ const Map = () => {
             provider={PROVIDER_GOOGLE}
             ref={mapRef}
             initialCamera={{
-                center: { latitude: 0, longitude: 0 },
-                pitch: 0,
+                center: { latitude: location ? location.latitude : 22, longitude: location ? location.longitude : -122},
+                pitch: 100,
                 zoom: 12,
                 heading: 0,
-                altitude: 0
+                altitude: 10 
             }}
             />
     )

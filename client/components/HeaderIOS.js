@@ -26,34 +26,38 @@ const HeaderIOS = () => {
     };
 
     return(
-        <GooglePlacesAutocomplete
-        placholder="Search"
-        styles={{
-            container: {
-                marginTop: "10%",
-                width: "80%",
-                alignSelf: "center",
-                borderRadius: "190%",
-            },
-            textInput: {
-                borderRadius: "30%",
-            },
-            listView: {
-                borderRadius: "20%"
-            },
-        }}
-        onPress={(data) => getCoords(data)}
-        query={{
-            key: apiKey,
-            language: "en"
-        }}
-        />
+            <GooglePlacesAutocomplete
+            placeholder="Place Pin"
+            styles={{
+                container: {
+                    marginTop: "10%",
+                    width: "80%",
+                    alignSelf: "center",
+                    borderRadius: "190%",
+                },
+                textInput: {
+                },
+                listView: {
+                    borderRadius: "20%"
+                },
+            }}
+            onPress={(data) => getCoords(data)}
+            query={{
+                key: apiKey,
+                language: "en"
+            }}
+            />
     )
 };
 
 const styles = StyleSheet.create({
     search: {
         marginTop: "10%"
+    },
+    card:{
+        marginTop: "10%",
+        alignContent: "center",
+        alignItems: "center"
     }
 });
 
