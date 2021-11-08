@@ -14,14 +14,17 @@ const Map = () => {
         setLocation(userLocation);
     }
 
+    TaskManager.defineTask(LOCATION_TASK_NAME, updateLocation);
+
+
     // Setup for background location //
     useEffect(async() => {
-        TaskManager.defineTask(LOCATION_TASK_NAME, updateLocation);
         let loc = await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
             accuracy: Location.Accuracy.Balanced,
             timeInterval: 1000
         });
-        console.log(location)
+        console.log(loc)
+        //console.log(location)
     },[location]);
 
 
