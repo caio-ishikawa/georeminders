@@ -3,46 +3,28 @@ import React, {Component, useEffect, useState, useContext, createRef } from 'rea
 import MapView, { PROVIDER_GOOGLE, Circle } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
-import { CoordContext } from '../global/Contexts';
+import { CoordContext, LocationContext } from '../global/Contexts';
 import { styling } from '../map-styling/styling';
 
 const Map = () => {
-    const [location, setLocation] = useState();
     const [coords, setCoords] = useContext(CoordContext);
+    const [location, setLocation] = useContext(LocationContext);
     const [pinCoords, setPinCoords] = useState({});
     const mapRef = createRef();
-    const LOCATION_TASK_NAME = 'background-location-task';
 
-    // Updates user location //
-    const updateLocation = async () => {
-        let userLocation = await Location.getCurrentPositionAsync({});
-        setLocation(userLocation.coords);
-    }
-
-    TaskManager.defineTask(LOCATION_TASK_NAME, updateLocation);
-
+    //useEffect(() => console.log(location))
 
     // Setup for background location //
-    useEffect(async() => {
-        let loc = await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-            accuracy: Location.Accuracy.Balanced,
-            timeInterval: 1000
-        });
-        console.log(coords ? coords : "no coordinates yet");
-
-        //If user specified coordinates change, update the map //
-        if (coords) { 
-            const newCamera = {
-                center: { latitude: coords.lat, longitude: coords.lng},
-                zoom: 16,
-                heading: 0,
-                pitch: 100,
-                altitude: 10 
-            }
-            mapRef.current.animateCamera(newCamera, {duration: 1000});
+    useEffect(() => {
+        const newCamera = {
+            center: { latitude: coords.lat, longitude: coords.lng},
+            zoom: 16,
+            heading: 0,
+            pitch: 100,
+            altitude: 10 
         }
-        console.log(location)
-    },[coords, location, pinCoords]);
+        mapRef.current.animateCamera(newCamera, {duration: 1000});
+    },[coords]);
 
     // Set coordinates based on where the user pressed in the map //
     const mapPress = (e) => {
@@ -80,8 +62,8 @@ const Map = () => {
             >
                 <Circle
                 center={{ latitude: pinCoords.latitude ? pinCoords.latitude : 38.722252, longitude: pinCoords.longitude ? pinCoords.longitude : -9.139337 }}
-                radius={200}
-                fillColor='black'
+                radius={30}
+                fillColor='purple'
                 />
             </MapView>
     )
@@ -99,3 +81,8 @@ const styles = StyleSheet.create({
 })
 
 export default Map;
+
+
+// MAIN LOGIC TO DO:
+// Save pin coordinates on local storage
+// Send notification once you get close to pin

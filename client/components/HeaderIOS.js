@@ -36,13 +36,10 @@ const HeaderIOS = () => {
                     marginTop: "15%",
                     width: "80%",
                     alignSelf: "center",
-                    borderRadius: "190%",
                 },
                 textInput: {
-                    borderRadius: "20%"
                 },
                 listView: {
-                    borderRadius: "20%"
                 },
             }}
             onPress={(data) => getCoords(data)}
