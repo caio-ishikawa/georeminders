@@ -23,6 +23,9 @@ const HeaderIOS = () => {
                 // Sets coordinates as global state //
                 setCoords(coordinates);
             })
+            .catch(function(error) {
+                console.log(error);
+            })
     };
 
     return(
@@ -30,12 +33,13 @@ const HeaderIOS = () => {
             placeholder="Place Pin"
             styles={{
                 container: {
-                    marginTop: "10%",
+                    marginTop: "15%",
                     width: "80%",
                     alignSelf: "center",
                     borderRadius: "190%",
                 },
                 textInput: {
+                    borderRadius: "20%"
                 },
                 listView: {
                     borderRadius: "20%"
