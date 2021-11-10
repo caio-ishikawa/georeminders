@@ -1,8 +1,9 @@
+// Sends push notification //
 export const sendPushNotification = async (expoToken) => {
     const message = {
       to: expoToken,
       sound: 'default',
-      title: 'Original Title',
+      title: 'REMINDER',
       body: 'And here is the body!',
       data: { someData: 'goes here' },
     };
