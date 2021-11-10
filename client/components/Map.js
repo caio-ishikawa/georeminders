@@ -1,10 +1,9 @@
 import { View, StyleSheet, Text, Alert } from 'react-native';
 import React, {Component, useEffect, useState, useContext, createRef } from 'react';
 import MapView, { PROVIDER_GOOGLE, Circle } from 'react-native-maps';
-import * as Location from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
 import { CoordContext, LocationContext } from '../global/Contexts';
 import { styling } from '../map-styling/styling';
+import { distance } from '../utils/distance';
 
 const Map = () => {
     const [coords, setCoords] = useContext(CoordContext);
@@ -14,7 +13,7 @@ const Map = () => {
 
     //useEffect(() => console.log(location))
 
-    // Setup for background location //
+    // Sets up new Map Camera once user selects location from search bar //
     useEffect(() => {
         const newCamera = {
             center: { latitude: coords.lat, longitude: coords.lng},
@@ -22,13 +21,22 @@ const Map = () => {
             heading: 0,
             pitch: 100,
             altitude: 10 
-        }
+        };
         mapRef.current.animateCamera(newCamera, {duration: 1000});
+
+        let userLng = location.longitude;
+        let userLat = location.latitude;
+        let pinLng = pinCoords.longitude;
+        let pinLat = pinCoords.latitude;
+        distance(userLat, userLng, pinLat, pinLng);
+
     },[coords]);
 
     // Set coordinates based on where the user pressed in the map //
     const mapPress = (e) => {
         let pin = e.nativeEvent.coordinate;
+        //console.log(pin);
+        //console.log("LOCATION: ", location)
 
         // Asks user if they intend to drop a marker in that location //
         // Avoids misclick //

@@ -24,10 +24,9 @@ export default function App() {
   useEffect(async() => {
     let loc = await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 1000
+        timeInterval: 10000
   });
-
-  //console.log(location)
+  //console.log(location);
 },[coords, location]);
 
   return (

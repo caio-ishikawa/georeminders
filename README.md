@@ -19,3 +19,8 @@ Don't want to forget to buy strings? Place a pin on the store and get reminded o
 - NodeJS
 - Express
 - MongoDB
+
+## TODO:
+- Save markers on local memory for MVP.
+- Constantly calculate distance between user and pins.
+- Notify user when within the radius of the pin.
