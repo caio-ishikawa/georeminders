@@ -8,8 +8,12 @@ import Header from './components/HeaderIOS';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 import { CoordContext, LocationContext, ExpoToken } from './global/Contexts';
 import * as Notifications from 'expo-notifications';
-import { addNotificationResponseReceivedListener, addNotificationsDroppedListener } from 'expo-notifications';
 import { registerForPushNotificationsAsync } from './utils/registerForPushNotificationsAsync';
+import Login from './routes/Login';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Main from './routes/Main';
+
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -21,6 +25,8 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [coords, setCoords] = useState('');
@@ -52,20 +58,35 @@ export default function App() {
         timeInterval: 29000
   });
   //console.log(location);
-},[location]);
+  },[location]);
+
 
   return (
+    // <CoordContext.Provider value={[coords, setCoords]}>
+    //   <View style={styles.container}>
+    //     <StatusBar style="auto" />
+    //     <LocationContext.Provider value={[location, setLocation]}>
+    //       <ExpoToken.Provider value={[expoToken, setExpoToken]}>
+    //         <Map/>
+    //       </ExpoToken.Provider>
+    //     </LocationContext.Provider>
+    //     <Header/>
+    //   </View>
+    // </CoordContext.Provider>
+   
     <CoordContext.Provider value={[coords, setCoords]}>
-      <View style={styles.container}>
-        <StatusBar style="auto" />
-        <LocationContext.Provider value={[location, setLocation]}>
-          <ExpoToken.Provider value={[expoToken, setExpoToken]}>
-            <Map/>
-          </ExpoToken.Provider>
-        </LocationContext.Provider>
-        <Header/>
-      </View>
+      <LocationContext.Provider value={[location, setLocation]}>
+        <ExpoToken.Provider value={[expoToken, setExpoToken]}>
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="Login">
+                <Stack.Screen options={{ headerShown: false}} name="Login" component={Login}/>
+                <Stack.Screen options={{ headerShown: false}}  name="Main" component={Main}/>
+              </Stack.Navigator>
+            </NavigationContainer>
+        </ExpoToken.Provider>
+      </LocationContext.Provider>
     </CoordContext.Provider>
+   
   );
 }
 

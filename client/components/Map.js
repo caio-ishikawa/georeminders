@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import React, {Component, useEffect, useState, useContext, createRef } from 'react';
 import MapView, { PROVIDER_GOOGLE, Circle } from 'react-native-maps';
 import { CoordContext, ExpoToken, LocationContext } from '../global/Contexts';
@@ -51,15 +51,19 @@ const Map = () => {
 
         // Asks user if they intend to drop a marker in that location //
         // Avoids misclick //
-        Alert.alert("Do you with to place a reminder here?", "",
+        Alert.prompt("Set a reminder", "Submit your reminder!",
         [
             {
-                text: "Yes",
-                onPress: () => setPinCoords(pin)
+                text: "Submit",
+                onPress: reminder => {
+                    setPinCoords(pin)
+                    console.log(reminder);
+                },
             },
             {
-                text: "No",
-                onPress: () => console.log("no")
+                text: "Cancel",
+                onPress: () => console.log("no"),
+                style: "cancel"
             }
         ]);
     };

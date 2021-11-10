@@ -4,7 +4,7 @@ export const sendPushNotification = async (expoToken) => {
       to: expoToken,
       sound: 'default',
       title: 'REMINDER',
-      body: 'And here is the body!',
+      body: 'You are close to your reminder location',
       data: { someData: 'goes here' },
     };
   
