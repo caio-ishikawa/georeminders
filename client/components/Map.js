@@ -1,17 +1,33 @@
 import { View, StyleSheet, Text, Alert } from 'react-native';
 import React, {Component, useEffect, useState, useContext, createRef } from 'react';
 import MapView, { PROVIDER_GOOGLE, Circle } from 'react-native-maps';
-import { CoordContext, LocationContext } from '../global/Contexts';
+import { CoordContext, ExpoToken, LocationContext } from '../global/Contexts';
 import { styling } from '../map-styling/styling';
 import { distance } from '../utils/distance';
+import { sendPushNotification } from '../utils/sendPushNotification';
 
 const Map = () => {
     const [coords, setCoords] = useContext(CoordContext);
     const [location, setLocation] = useContext(LocationContext);
+    const [expoToken, setExpoToken] = useContext(ExpoToken);
     const [pinCoords, setPinCoords] = useState({});
     const mapRef = createRef();
 
-    //useEffect(() => console.log(location))
+    // Returns distance between user and pin //
+    useEffect(() => {
+        let userLng = location.longitude;
+        let userLat = location.latitude;
+        let pinLng = pinCoords.longitude;
+        let pinLat = pinCoords.latitude;
+        let pinDistance = distance(userLat, userLng, pinLat, pinLng);
+
+        if (pinDistance <= 0.30) {
+            console.log("YOU CLOSE DUDE");
+            sendPushNotification(expoToken);
+        } else {
+            console.log("NOT THAT CLOSE")
+        }
+    });
 
     // Sets up new Map Camera once user selects location from search bar //
     useEffect(() => {
@@ -24,11 +40,6 @@ const Map = () => {
         };
         mapRef.current.animateCamera(newCamera, {duration: 1000});
 
-        let userLng = location.longitude;
-        let userLat = location.latitude;
-        let pinLng = pinCoords.longitude;
-        let pinLat = pinCoords.latitude;
-        distance(userLat, userLng, pinLat, pinLng);
 
     },[coords]);
 
@@ -36,7 +47,7 @@ const Map = () => {
     const mapPress = (e) => {
         let pin = e.nativeEvent.coordinate;
         //console.log(pin);
-        //console.log("LOCATION: ", location)
+        console.log("LOCATION: ", location)
 
         // Asks user if they intend to drop a marker in that location //
         // Avoids misclick //

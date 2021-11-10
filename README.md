@@ -1,6 +1,6 @@
 # GeoReminders #
 
-A React Native application that allows users to place reminders in geographical space. 
+A React Native application that allows users to place reminders in geographical space.
 
 ## The problem ##
 
@@ -10,17 +10,19 @@ Writing it down on my phone only helps so much, as I don't have the habit of loo
 
 ## The solution ##
 
-It's as easy as placing a pin on the map. 
+It's as easy as placing a pin on the map.
 
 Don't want to forget to buy strings? Place a pin on the store and get reminded once you get within a certain distance from it.
 
 ### Technologies ###
+
 - React Native
 - NodeJS
 - Express
 - MongoDB
 
-## TODO:
+## TODO ##
+
 - Save markers on local memory for MVP.
 - Constantly calculate distance between user and pins.
 - Notify user when within the radius of the pin.
