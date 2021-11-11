@@ -13,6 +13,8 @@ import Login from './routes/Login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Main from './routes/Main';
+import Home from './routes/Home';
+import Register from './routes/Register';
 
 
 const LOCATION_TASK_NAME = 'background-location-task';
@@ -78,9 +80,11 @@ export default function App() {
       <LocationContext.Provider value={[location, setLocation]}>
         <ExpoToken.Provider value={[expoToken, setExpoToken]}>
             <NavigationContainer>
-              <Stack.Navigator initialRouteName="Login">
+              <Stack.Navigator initialRouteName="Home">
                 <Stack.Screen options={{ headerShown: false}} name="Login" component={Login}/>
                 <Stack.Screen options={{ headerShown: false}}  name="Main" component={Main}/>
+                <Stack.Screen options={{headerShown: false}} name="Home" component={Home}/>
+                <Stack.Screen options={{ headerShown: false }} name="Register" component={Register}/>
               </Stack.Navigator>
             </NavigationContainer>
         </ExpoToken.Provider>

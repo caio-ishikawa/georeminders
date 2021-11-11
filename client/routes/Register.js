@@ -5,18 +5,17 @@ import {LinearGradient} from 'expo-linear-gradient';
 
 
 
-const Login = ( { navigation }) => {
+const Register = ( { navigation }) => {
     return(
         <View style={styles.cont}>
             <Image style={styles.logo} source={logo4}/>
             <TextInput style={styles.input} placeholder="Username"/>
+            <TextInput style={styles.input} placeholder="Email"/>
             <TextInput style={styles.input} placeholder="Password"/>
+            <TextInput style={styles.input} placeholder="Re-enter Password"/>
             <LinearGradient start={[0,1]} end={[1, 0]} colors={[ '#3f5efb', "#a751ac", "#fc466b", "#ff8d0a" ]} style={styles.linear}>
                 <Button onPress={() => navigation.navigate("Main")} color="white" title="Log in"/>
             </LinearGradient>
-            <Text style={styles.regPrompt}>Don't have an account? Sign up here!</Text>
-
-
         </View>
     )
 
@@ -62,4 +61,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Login;
+export default Register;
