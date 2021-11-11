@@ -11,6 +11,7 @@ const Map = () => {
     const [location, setLocation] = useContext(LocationContext);
     const [expoToken, setExpoToken] = useContext(ExpoToken);
     const [pinCoords, setPinCoords] = useState({});
+    const [reminder, setReminder] = useState('');
     const mapRef = createRef();
 
     // Returns distance between user and pin //
@@ -39,12 +40,30 @@ const Map = () => {
             altitude: 10 
         };
         mapRef.current.animateCamera(newCamera, {duration: 1000});
-
-
     },[coords]);
 
+
+    // Posts pin data on database //
+    useEffect(async () => {
+    const request = await fetch('http://localhost:3002/post/post_pin', {
+        method: "POST",
+        headers: {
+            Accept: 'application/json',
+            'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+            username: "Caiouser",
+            note: reminder,
+            lat: pinCoords.latitude,
+            lng: pinCoords.longitude 
+        })
+    })
+    const data = await request.json();
+    console.log(data);
+    }, [pinCoords]);
+
     // Set coordinates based on where the user pressed in the map //
-    const mapPress = (e) => {
+    const mapPress = async (e) => {
         let pin = e.nativeEvent.coordinate;
         //console.log(pin);
         console.log("LOCATION: ", location)
@@ -57,7 +76,7 @@ const Map = () => {
                 text: "Submit",
                 onPress: reminder => {
                     setPinCoords(pin)
-                    console.log(reminder);
+                    setReminder(reminder);
                 },
             },
             {
