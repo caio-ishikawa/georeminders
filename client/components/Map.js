@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Text } from 'react-native';
 import React, {Component, useEffect, useState, useContext, createRef } from 'react';
 import MapView, { PROVIDER_GOOGLE, Circle } from 'react-native-maps';
 import { CoordContext, ExpoToken, LocationContext } from '../global/Contexts';
@@ -12,7 +12,25 @@ const Map = () => {
     const [expoToken, setExpoToken] = useContext(ExpoToken);
     const [pinCoords, setPinCoords] = useState({});
     const [reminder, setReminder] = useState('');
+    const [allReminders, setAllReminders] = useState([]);
     const mapRef = createRef();
+
+    // Gets all pins from logged user //
+    useEffect(async () => {
+        let request = await fetch('http://192.168.1.74:3002/get/get_pins', {
+            method: "POST",
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: "Caiouser"
+            })
+        })
+        const data = await request.json()
+        setAllReminders(data.pins);
+        console.log("go pins")
+    }, [pinCoords]);
 
     // Returns distance between user and pin //
     useEffect(() => {
@@ -44,28 +62,27 @@ const Map = () => {
 
 
     // Posts pin data on database //
-    useEffect(async () => {
-    const request = await fetch('http://localhost:3002/post/post_pin', {
-        method: "POST",
-        headers: {
-            Accept: 'application/json',
-            'Content-Type':'application/json'
-        },
-        body: JSON.stringify({
-            username: "Caiouser",
-            note: reminder,
-            lat: pinCoords.latitude,
-            lng: pinCoords.longitude 
+    const postPin = async (location, note) => {
+        const request = await fetch('http://192.168.1.74:3002/post/post_pin', {
+            method: "POST",
+            headers: {
+                Accept: 'application/json',
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                username: "Caiouser",
+                note: note,
+                lat: location.latitude,
+                lng: location.longitude 
+            })
         })
-    })
-    const data = await request.json();
-    console.log(data);
-    }, [pinCoords]);
+        const data = await request.json();
+        console.log("post pin function", data);
+    };
 
     // Set coordinates based on where the user pressed in the map //
     const mapPress = async (e) => {
         let pin = e.nativeEvent.coordinate;
-        //console.log(pin);
         console.log("LOCATION: ", location)
 
         // Asks user if they intend to drop a marker in that location //
@@ -77,6 +94,7 @@ const Map = () => {
                 onPress: reminder => {
                     setPinCoords(pin)
                     setReminder(reminder);
+                    postPin(pin, reminder);
                 },
             },
             {
@@ -102,11 +120,23 @@ const Map = () => {
                 altitude: 10 
             }}
             >
-                <Circle
-                center={{ latitude: pinCoords.latitude ? pinCoords.latitude : 38.722252, longitude: pinCoords.longitude ? pinCoords.longitude : -9.139337 }}
-                radius={30}
-                fillColor='purple'
-                />
+                { allReminders.length > 0 ? 
+                allReminders.map((rem, idx) => {
+                    return (
+                        <Circle
+                        key={idx}
+                        center={{ latitude: rem.latitude, longitude: rem.longitude}}
+                        radius={30}
+                        />
+                    )
+                    })
+                    :
+                    <Circle
+                    center={{ latitude: pinCoords.latitude ? pinCoords.latitude : 38.722252, longitude: pinCoords.longitude ? pinCoords.longitude : -9.139337 }}
+                    radius={30}
+                    fillColor='purple'
+                    />
+                }
             </MapView>
     )
 };

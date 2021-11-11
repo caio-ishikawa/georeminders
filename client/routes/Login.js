@@ -12,7 +12,7 @@ const Login = ( { navigation }) => {
 
 
     const submitData = async () => {
-        const request = await fetch('http://localhost:3002/auth/login', { 
+        const request = await fetch('http://192.168.1.74:3002/auth/login', { 
             method: "POST",
             headers: {
                 Accept: 'application/json',
