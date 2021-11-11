@@ -20,3 +20,8 @@ Don't want to forget to buy strings? Place a pin on the store and get reminded o
 - NodeJS
 - Express
 - MongoDB
+
+## TODO ##
+
+- Calculate distance between user and pins.
+- Limit free-tier users to 1 pin at a time.
