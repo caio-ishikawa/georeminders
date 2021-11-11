@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const { userExists } = require('../utils/userExists');
+const { usernameExists } = require('../utils/usernameExists');
 
 router.post('/register', async (req, res) => {
     if (await userExists(req.body.username, req.body.email)) {
@@ -20,6 +21,23 @@ router.post('/register', async (req, res) => {
             console.log(err);
         }
     }
+});
+
+router.post('/login', async (req, res) => {
+    if (!await usernameExists(req.body.username)) {
+        res.status(400).json({"message": "Invalid username/password"});
+        console.log('uh oh')
+    } else {
+        const user = await User.findOne({username: req.body.username});
+        if (user.password === req.body.password) {
+            console.log("verified")
+            res.json({"data": "Successful login!"});
+        } else {
+            console.log('damn')
+            res.status(400).json({"message": "Invalid username/password."});
+        }
+    }
+
 });
 
 module.exports = router;

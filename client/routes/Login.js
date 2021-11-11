@@ -1,20 +1,49 @@
-import React from "react";
-import {View, Text, Pressable, Image, StyleSheet, TextInput, Button} from 'react-native';
+import React, { useState } from "react";
+import {View, Text, Pressable, Image, StyleSheet, TextInput, Button, Alert} from 'react-native';
 import logo4 from '../assets/logo4.png';
 import {LinearGradient} from 'expo-linear-gradient';
 
 
 
 const Login = ( { navigation }) => {
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+
+    const submitData = async () => {
+        const request = await fetch('http://localhost:3002/auth/login', { 
+            method: "POST",
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username, 
+                password: password
+            })
+        })
+        const data = await request.json();
+        if (data.data === "Successful login!") {
+            navigation.navigate("Main")
+        } else {
+            Alert.alert("Invalid username/password.", "Please try again.");
+            console.log("this works")
+        }
+
+    };
+
+
+    
     return(
         <View style={styles.cont}>
             <Image style={styles.logo} source={logo4}/>
-            <TextInput style={styles.input} placeholder="Username"/>
-            <TextInput style={styles.input} placeholder="Password"/>
+            <TextInput value={username} onChangeText={(user) => setUsername(user)} style={styles.input} placeholder="Username"/>
+            <TextInput style={styles.input} placeholder="Password" value={password}onChangeText={(pass) => setPassword(pass)}/>
             <LinearGradient start={[0,1]} end={[1, 0]} colors={[ '#3f5efb', "#a751ac", "#fc466b", "#ff8d0a" ]} style={styles.linear}>
-                <Button onPress={() => navigation.navigate("Main")} color="white" title="Log in"/>
+                <Button onPress={() => submitData()} color="white" title="Log in"/>
             </LinearGradient>
-            <Text style={styles.regPrompt}>Don't have an account? Sign up here!</Text>
+            <Text style={styles.regPrompt}>Forgot your password? Click here.</Text>
 
 
         </View>
