@@ -8,8 +8,8 @@ A React Native application that allows users to place reminders in geographical 
      <td>Map page</td>
   </tr>
   <tr>
-    <td><img src="https://i.imgur.com/dVYqd7g.png" width="500"></td>
-    <td><img src="https://i.imgur.com/vPNvdzf.png"></td>
+    <td><img src="https://i.imgur.com/dVYqd7g.png" width="300"></td>
+    <td><img src="https://i.imgur.com/vPNvdzf.png" width="300"></td>
   </tr>
  </table>
 
