@@ -34,13 +34,22 @@ const HeaderIOS = () => {
             styles={{
                 container: {
                     marginTop: "15%",
-                    width: "80%",
+                    width: "90%",
                     alignSelf: "center",
                 },
                 textInput: {
+                    backgroundColor: "white",
+                    color: "black",
+                    borderRadius: 20
+                },
+                poweredContainer: {
+                    borderBottomRightRadius: 20,
+                    borderBottomLeftRadius: 20
                 },
                 listView: {
-                },
+                    width: "100%",
+                    borderRadius: 20
+                }
             }}
             onPress={(data) => getCoords(data)}
             query={{
