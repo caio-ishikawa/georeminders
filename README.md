@@ -2,6 +2,17 @@
 
 A React Native application that allows users to place reminders in geographical space.
 
+<table>
+  <tr>
+    <td>Landing Page</td>
+     <td>Map page</td>
+  </tr>
+  <tr>
+    <td><img src="https://imgur.com/a/0XmIoeD" width="500"></td>
+    <td><img src="https://imgur.com/a/GVMBp4r"></td>
+  </tr>
+ </table>
+
 ## The problem ##
 
 I usually have a hard time remembering to buy guitar strings, to text a loved one when I reached my destination, or to buy a specific cleaning product for my apartment. 
