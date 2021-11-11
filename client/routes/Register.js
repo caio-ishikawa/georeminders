@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {View, Text, Pressable, Image, StyleSheet, TextInput, Button} from 'react-native';
+import {View, Text, Alert, Image, StyleSheet, TextInput, Button} from 'react-native';
 import logo4 from '../assets/logo4.png';
 import {LinearGradient} from 'expo-linear-gradient';
 
@@ -24,7 +24,12 @@ const Register = ({ navigation }) => {
             })
         })
         const data = await request.json();
-        console.log(data);
+        if (data.data === "User successfully created!") {
+            navigation.navigate("Main")
+        } else {
+            Alert.alert("Username or email alredy exist.", "Please try again with new credentials or log into you existing account.");
+            console.log("this works")
+        }
 
     };
 
