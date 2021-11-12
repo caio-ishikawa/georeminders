@@ -44,8 +44,6 @@ const Login = ( { navigation }) => {
                 <Button onPress={() => submitData()} color="white" title="Log in"/>
             </LinearGradient>
             <Text style={styles.regPrompt}>Forgot your password? Click here.</Text>
-
-
         </View>
     )
 

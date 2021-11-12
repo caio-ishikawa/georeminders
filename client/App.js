@@ -15,6 +15,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Main from './routes/Main';
 import Home from './routes/Home';
 import Register from './routes/Register';
+import * as SecureStore from 'expo-secure-store';
 
 
 const LOCATION_TASK_NAME = 'background-location-task';
@@ -59,6 +60,7 @@ export default function App() {
         accuracy: Location.Accuracy.Balanced,
         timeInterval: 29000
   });
+  loc;
   //console.log(location);
   },[location]);
 

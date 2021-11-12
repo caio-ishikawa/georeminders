@@ -5,6 +5,7 @@ import { CoordContext, ExpoToken, LocationContext } from '../global/Contexts';
 import { styling } from '../map-styling/styling';
 import { distance } from '../utils/distance';
 import { sendPushNotification } from '../utils/sendPushNotification';
+import * as SecureStore from 'expo-secure-store';
 
 const Map = () => {
     const [coords, setCoords] = useContext(CoordContext);
@@ -12,11 +13,14 @@ const Map = () => {
     const [expoToken, setExpoToken] = useContext(ExpoToken);
     const [pinCoords, setPinCoords] = useState({});
     const [reminder, setReminder] = useState('');
+    const [reminderAmount, setReminderAmount] = useState(0);
     const [allReminders, setAllReminders] = useState([]);
+    const [userTier, setUserTier] = useState(0);
     const mapRef = createRef();
 
     // Gets all pins from logged user //
     useEffect(async () => {
+        console.log("uopdating reminders")
         let request = await fetch('http://192.168.1.74:3002/get/get_pins', {
             method: "POST",
             headers: {
@@ -29,22 +33,30 @@ const Map = () => {
         })
         const data = await request.json()
         setAllReminders(data.pins);
-        console.log("go pins")
-    }, [pinCoords]);
+        setReminderAmount(data.pins.length);
+    }, [reminder]);
 
     // Returns distance between user and pin //
     useEffect(() => {
-        let userLng = location.longitude;
-        let userLat = location.latitude;
-        let pinLng = pinCoords.longitude;
-        let pinLat = pinCoords.latitude;
-        let pinDistance = distance(userLat, userLng, pinLat, pinLng);
+        if (userTier === 0 && allReminders.length < 2) {
+            //console.log("AMOUNT: ", reminderAmount);
+            //console.log("All Reminders: ", allReminders[0]);
+            let userLng = location.longitude;
+            let userLat = location.latitude;
+            let pinLng = reminderAmount > 0 ? allReminders[0].longitude : undefined;
+            let pinLat = reminderAmount > 0 ? allReminders[0].latitude : undefined;
+            let pinDistance = distance(userLat, userLng, pinLat, pinLng);
 
-        if (pinDistance <= 0.30) {
-            console.log("YOU CLOSE DUDE");
-            sendPushNotification(expoToken);
+            if (pinDistance <= 0.80) {
+                console.log("YOU CLOSE DUDE");
+                console.log(pinDistance)
+                sendPushNotification(expoToken);
+            } else {
+                //console.log({"lng": pinLng, "lat": pinLat, "userLat": userLat, "userLng": userLng});
+                console.log("NOT THAT CLOSE")
+            }
         } else {
-            console.log("NOT THAT CLOSE")
+            console.log("Have not figured out how to calcualte distance for more pins at the same time without breaking my entire app")
         }
     });
 
@@ -63,28 +75,33 @@ const Map = () => {
 
     // Posts pin data on database //
     const postPin = async (location, note) => {
-        const request = await fetch('http://192.168.1.74:3002/post/post_pin', {
-            method: "POST",
-            headers: {
-                Accept: 'application/json',
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({
-                username: "Caiouser",
-                note: note,
-                lat: location.latitude,
-                lng: location.longitude 
+        setPinCoords(location);
+        setReminder(note);
+        // If user is on free-tier and already has one pin placed, prompt subscription model //
+        if (reminderAmount >= 1 && userTier === 0) {
+            Alert.alert("Maximum amount of reminders reached!", "Click ok to redirect to subscription page.")
+        } else {
+            const request = await fetch('http://192.168.1.74:3002/post/post_pin', {
+                method: "POST",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({
+                    username: "Caiouser",
+                    note: note,
+                    lat: location.latitude,
+                    lng: location.longitude 
+                })
             })
-        })
-        const data = await request.json();
-        console.log("post pin function", data);
+            const data = await request.json();
+            console.log("post pin function", data);
+        }
     };
 
     // Set coordinates based on where the user pressed in the map //
     const mapPress = async (e) => {
         let pin = e.nativeEvent.coordinate;
-        console.log("LOCATION: ", location)
-
         // Asks user if they intend to drop a marker in that location //
         // Avoids misclick //
         Alert.prompt("Set a reminder", "Submit your reminder!",
@@ -92,8 +109,6 @@ const Map = () => {
             {
                 text: "Submit",
                 onPress: reminder => {
-                    setPinCoords(pin)
-                    setReminder(reminder);
                     postPin(pin, reminder);
                 },
             },
@@ -120,22 +135,18 @@ const Map = () => {
                 altitude: 10 
             }}
             >
-                { allReminders.length > 0 ? 
+                { reminderAmount > 0 ? 
                 allReminders.map((rem, idx) => {
                     return (
                         <Circle
                         key={idx}
                         center={{ latitude: rem.latitude, longitude: rem.longitude}}
-                        radius={30}
+                        radius={70}
                         />
                     )
                     })
                     :
-                    <Circle
-                    center={{ latitude: pinCoords.latitude ? pinCoords.latitude : 38.722252, longitude: pinCoords.longitude ? pinCoords.longitude : -9.139337 }}
-                    radius={30}
-                    fillColor='purple'
-                    />
+                    <Text>test</Text>
                 }
             </MapView>
     )

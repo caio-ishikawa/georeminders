@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {View, Text, Alert, Image, StyleSheet, TextInput, Button} from 'react-native';
 import logo4 from '../assets/logo4.png';
 import {LinearGradient} from 'expo-linear-gradient';
+import * as SecureStore from 'expo-secure-store'
 
 
 
@@ -11,7 +12,7 @@ const Register = ({ navigation }) => {
     const [password, setPassword] = useState('');
 
     const submitData = async () => {
-        const request = await fetch('http://localhost:3002/auth/register', { 
+        const request = await fetch('http://192.168.1.74:3002/auth/register', { 
             method: "POST",
             headers: {
                 Accept: 'application/json',
@@ -25,6 +26,8 @@ const Register = ({ navigation }) => {
         })
         const data = await request.json();
         if (data.data === "User successfully created!") {
+            await SecureStore.setItemAsync('username', username);
+            await SecureStore.setItemAsync('tier', '0');
             navigation.navigate("Main")
         } else {
             Alert.alert("Username or email alredy exist.", "Please try again with new credentials or log into you existing account.");

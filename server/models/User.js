@@ -17,6 +17,12 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         min: 8
+    },
+    tier: {
+        type: Number,
+        enum: [ 0, 1, 2, 3],
+        required: true,
+        default: 0
     }
 });
 

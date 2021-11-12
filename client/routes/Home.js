@@ -1,9 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {View, Text, Pressable, Image, StyleSheet, TouchableOpacity, Button} from 'react-native';
 import logo4 from '../assets/logo4.png';
 import {LinearGradient} from 'expo-linear-gradient';
+import * as SecureStore from 'expo-secure-store';
 
 const Home = ({ navigation }) => {
+    const [storedName, setStoredName] = useState('');
+
+    // Navigate to main page if username is stored in memory //
+    useEffect(async() => {
+        let storedUser = await SecureStore.getItemAsync('username');
+        if (storedUser) {
+            navigation.navigate("Main");
+        }
+    },[]);
+
     return(
         <View style={styles.cont}>
             <Image style={styles.logo} source={logo4}/>

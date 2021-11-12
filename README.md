@@ -36,3 +36,4 @@ Don't want to forget to buy strings? Place a pin on the store and get reminded o
 
 - Calculate distance between user and pins.
 - Limit free-tier users to 1 pin at a time.
+- Store enctypted username on local memory to avoid login every time a user opens the app.
