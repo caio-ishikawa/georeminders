@@ -1,11 +1,12 @@
-import { View, StyleSheet, Alert, Text } from 'react-native';
-import React, {Component, useEffect, useState, useContext, createRef } from 'react';
-import MapView, { PROVIDER_GOOGLE, Circle } from 'react-native-maps';
+import { View, StyleSheet, Alert, Text, Animated } from 'react-native';
+import React, {Component, useEffect, useState, useContext, createRef, useRef } from 'react';
+import MapView, { PROVIDER_GOOGLE, Circle, Marker } from 'react-native-maps';
 import { CoordContext, ExpoToken, LocationContext } from '../global/Contexts';
 import { styling } from '../map-styling/styling';
 import { distance } from '../utils/distance';
 import { sendPushNotification } from '../utils/sendPushNotification';
 import * as SecureStore from 'expo-secure-store';
+import { animateCircle } from '../utils/animateCircle';
 
 const Map = () => {
     const [coords, setCoords] = useContext(CoordContext);
@@ -17,10 +18,16 @@ const Map = () => {
     const [allReminders, setAllReminders] = useState([]);
     const [userTier, setUserTier] = useState(0);
     const mapRef = createRef();
+    const scaleAnimationRef = useRef(new Animated.Value(0)).current;
+    const opacityAnimationRef = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        animateCircle(scaleAnimationRef, opacityAnimationRef);
+    }, [opacityAnimationRef]);
 
     // Gets all pins from logged user //
     useEffect(async () => {
-        console.log("uopdating reminders")
+        console.log("UPDATING REMINDERS || UPDATING REMINDERS || UPDATING REMINDERS || UPDATING REMINDERS || UPDATING REMINDERS")
         let request = await fetch('http://192.168.1.74:3002/get/get_pins', {
             method: "POST",
             headers: {
@@ -38,9 +45,7 @@ const Map = () => {
 
     // Returns distance between user and pin //
     useEffect(() => {
-        if (userTier === 0 && allReminders.length < 2) {
-            //console.log("AMOUNT: ", reminderAmount);
-            //console.log("All Reminders: ", allReminders[0]);
+        if (userTier === 0 && reminderAmount < 2) {
             let userLng = location.longitude;
             let userLat = location.latitude;
             let pinLng = reminderAmount > 0 ? allReminders[0].longitude : undefined;
@@ -49,10 +54,10 @@ const Map = () => {
 
             if (pinDistance <= 0.80) {
                 console.log("YOU CLOSE DUDE");
-                console.log(pinDistance)
+                console.log("DISTANCE FROM PIN: ", pinDistance + "m")
                 sendPushNotification(expoToken);
             } else {
-                //console.log({"lng": pinLng, "lat": pinLat, "userLat": userLat, "userLng": userLng});
+                console.log({"lng": pinLng, "lat": pinLat, "userLat": userLat, "userLng": userLng, "distance":pinDistance });
                 console.log("NOT THAT CLOSE")
             }
         } else {
@@ -66,7 +71,7 @@ const Map = () => {
             center: { latitude: coords.lat, longitude: coords.lng},
             zoom: 16,
             heading: 0,
-            pitch: 100,
+            pitch: 0,
             altitude: 10 
         };
         mapRef.current.animateCamera(newCamera, {duration: 1000});
@@ -138,11 +143,20 @@ const Map = () => {
                 { reminderAmount > 0 ? 
                 allReminders.map((rem, idx) => {
                     return (
-                        <Circle
+                        <Marker
                         key={idx}
-                        center={{ latitude: rem.latitude, longitude: rem.longitude}}
-                        radius={70}
-                        />
+                        coordinate={{ latitude: rem.latitude, longitude: rem.longitude}}
+                        >
+                            <Animated.View style={styles.markerWrap}>
+                                <Animated.View style={[
+                                    styles.ring,
+                                    { opacity: opacityAnimationRef },
+                                    { transform: [{ scale: scaleAnimationRef }] }
+                                ]}
+                                />
+                                <View style={styles.marker}/>
+                            </Animated.View>
+                        </Marker>
                     )
                     })
                     :
@@ -160,7 +174,27 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0
-      },
+        },
+    markerWrap: {
+        alignItems: 'center',
+        justifyContent: 'center'
+        },
+    marker: {
+        width: 8,
+        height: 8,
+        borderRadius: 100,
+        backgroundColor: 'rgba(130,4,150, 0.9)',
+        position: 'absolute'
+        },
+    ring: {
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        backgroundColor: 'rgba(130,4,150, 0.3)',
+        borderWidth: 1,
+        borderColor: 'rgba(130,4,150, 0.5)',
+        opacity: 1
+        }
 })
 
 export default Map;

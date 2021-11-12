@@ -48,22 +48,28 @@ export default function App() {
     }
   }, []);
 
-  // Sets state to user location //
-  TaskManager.defineTask(LOCATION_TASK_NAME, async () => {
-    let userLocation = await Location.getCurrentPositionAsync({});
-    setLocation(userLocation.coords);
-  });
-
   // Sets up user location // 
   useEffect(async() => {
-    let loc = await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === 'granted') {
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
         accuracy: Location.Accuracy.Balanced,
         timeInterval: 29000
-  });
-  loc;
+    });
+  }
   //console.log(location);
   },[location]);
 
+  // Sets state to user location //
+  TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+    if (error) {
+      console.log("ERROR IN LOCAITON SERVICE: ", error);
+    }; 
+    if (data) {
+      setLocation(data.locations[0].coords);
+    }
+
+  });
 
   return (
     // <CoordContext.Provider value={[coords, setCoords]}>
