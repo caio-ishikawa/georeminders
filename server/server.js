@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const secrets = require('./secrets');
+const dotenv = require('dotenv').config();
 
 // EXPRESS + CORS SETUP //
 const app = express();
@@ -18,7 +19,7 @@ app.use('/auth', authRoutes);
 app.use('/post', postRoutes);
 
 // DATABASE CONNECTION //
-mongoose.connect(secrets, (err) => {
+mongoose.connect(process.env.CONNECTION_STRING, (err) => {
     if (err) {
         console.log(err);
     } else {
